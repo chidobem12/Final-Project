@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-void: #050508;
+    --bg-surface: #0a0b0f;
+    --bg-raised: #0f1117;
+    --bg-border: #1a1d27;
+    --accent-primary: #00ff88;
+    --accent-threat: #ff3a3a;
+    --accent-warning: #ffaa00;
+    --accent-high: #ff7a1a;
+    --accent-info: #4da6ff;
+    --accent-dim: #2a5fff;
+    --text-primary: #e8eaf2;
+    --text-secondary: #6b7280;
+    --text-mono: #00ff88;
+    --glow-green: 0 0 20px rgba(0, 255, 136, 0.3);
+    --glow-red: 0 0 20px rgba(255, 58, 58, 0.4);
+  }
+
+  body {
+    background-color: var(--bg-void);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+.scanlines::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 136, 0.015) 2px,
+    rgba(0, 255, 136, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+  from { background-position: 0 0; }
+  to { background-position: 0 -100px; }
+}
+
+@keyframes threat-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 58, 58, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 58, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 58, 58, 0); }
+}
+
+.animate-threat-pulse {
+  animation: threat-pulse 2s infinite;
+}

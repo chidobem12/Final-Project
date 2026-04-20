@@ -1,0 +1,5 @@
+{
+  "best_model": "random_forest",
+  "metric": "recall",
+  "score": 0.6988095238095238
+}

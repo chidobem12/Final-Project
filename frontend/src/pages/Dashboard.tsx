@@ -15,7 +15,7 @@ export default function Dashboard() {
         <div className="p-6 h-full flex flex-col space-y-6 overflow-auto">
             <ThreatStatusBanner />
 
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
                 <MetricCard title="Events / Min" value={eventsPerMinute} trend="neutral" />
                 <MetricCard title="Threat Rate" value={threatRatePercent} subtitle="Percent of traffic flagged" type={threatRatePercent > 10 ? 'threat' : 'default'} />
                 <MetricCard title="Active Threats" value={activeAttackTypes.length || 0} type={activeAttackTypes.length > 0 ? "threat" : "default"} />
@@ -25,7 +25,7 @@ export default function Dashboard() {
 
             <LiveThreatChart />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-[300px]">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[300px]">
                 <AttackTypeDistribution />
                 <RecentAlertsPanel />
                 <ModelAgreementPanel />

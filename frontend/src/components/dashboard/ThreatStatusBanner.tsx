@@ -22,8 +22,8 @@ export function ThreatStatusBanner() {
 
     return (
         <div className={clsx(
-            "w-full transition-all duration-500 overflow-hidden rounded-lg border",
-            isThreat ? "bg-accent-threat/10 border-accent-threat text-accent-threat animate-threat-pulse p-4" : "bg-bg-surface border-accent-primary/30 text-accent-primary p-2 h-12"
+            "w-full transition-all duration-500 rounded-lg border flex-shrink-0",
+            isThreat ? "bg-accent-threat/10 border-accent-threat text-accent-threat animate-threat-pulse p-4" : "bg-bg-surface border-accent-primary/30 text-accent-primary p-3"
         )}>
             <div className="flex items-center space-x-4">
                 {isThreat ? (

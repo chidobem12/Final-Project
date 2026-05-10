@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 from .packet_generator import generate_event
 from .attack_scenarios import SCENARIOS
-from ..api.ws_handler import evaluate_event_for_incident, manager
+from ..api.ws_handler import manager
 from ..ml.predictor import predictor
 from ..data.event_store import event_store
 from ..data.stats_aggregator import stats_aggregator
@@ -123,10 +123,6 @@ class NetworkSimulator:
             # Broadcast
             await manager.broadcast_event(event_full)
 
-            # Auto-incident evaluation and push
-            incident = evaluate_event_for_incident(event_full)
-            if incident:
-                await manager.broadcast_incident(incident)
             
             # Broadcast stats
             await manager.broadcast_stats(stats_aggregator.get_stats())

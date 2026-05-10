@@ -25,22 +25,6 @@ export interface ThreatEvent {
   true_label?: string;
 }
 
-export interface Incident {
-  id: string;
-  title: string;
-  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM';
-  status: 'OPEN' | 'INVESTIGATING' | 'RESOLVED' | 'FALSE_POSITIVE';
-  attack_type: string;
-  source_ip: string;
-  created_at: string;
-  updated_at: string;
-  event_ids: string[];
-  notes: string;
-  assigned_to?: string;
-  resolved_at?: string;
-  resolution_note?: string;
-}
-
 export interface NetworkNode {
   id: string;
   type: 'internal' | 'external' | 'gateway';
@@ -105,11 +89,6 @@ interface AegisStore {
     agreementRate: number;
   }[];
   recomputeStats: () => void;
-
-  incidents: Incident[];
-  addIncident: (incident: Incident) => void;
-  updateIncident: (id: string, updates: Partial<Incident>) => void;
-  unresolvedCount: number;
 
   user: AegisUser | null;
   token: string | null;
@@ -338,29 +317,6 @@ export const useAegisStore = create<AegisStore>((set, get) => ({
       metricsHistory: nextHistory,
     });
   },
-
-  incidents: [],
-  addIncident: (incident) =>
-    set((state) => {
-      const deduped = [incident, ...state.incidents.filter((entry) => entry.id !== incident.id)].sort((a, b) =>
-        b.created_at.localeCompare(a.created_at),
-      );
-      return {
-        incidents: deduped,
-        unresolvedCount: deduped.filter((entry) => entry.status === 'OPEN' || entry.status === 'INVESTIGATING').length,
-      };
-    }),
-  updateIncident: (id, updates) =>
-    set((state) => {
-      const updated = state.incidents.map((incident) =>
-        incident.id === id ? { ...incident, ...updates, updated_at: new Date().toISOString() } : incident,
-      );
-      return {
-        incidents: updated,
-        unresolvedCount: updated.filter((entry) => entry.status === 'OPEN' || entry.status === 'INVESTIGATING').length,
-      };
-    }),
-  unresolvedCount: 0,
 
   user: initialUser,
   token: initialToken,

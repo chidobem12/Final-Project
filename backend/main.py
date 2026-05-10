@@ -7,7 +7,6 @@ import uvicorn
 
 from .api.routes import router
 from .auth.router import router as auth_router
-from .incidents.router import router as incidents_router
 from .ml.model_loader import model_manager
 from .simulator.network_simulator import simulator
 
@@ -25,7 +24,6 @@ app.add_middleware(
 
 app.include_router(router)
 app.include_router(auth_router)
-app.include_router(incidents_router)
 
 @app.on_event("startup")
 async def startup_event():

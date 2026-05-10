@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Shield, Activity, Map, BarChart2, Settings, ShieldAlert } from 'lucide-react';
+import { Shield, Activity, Map, BarChart2, Settings } from 'lucide-react';
 import { useAegisStore } from '../../store/useAegisStore';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function Sidebar() {
-    const { wsConnected, events, unresolvedCount, simulationPaused } = useAegisStore();
+    const { wsConnected, events, simulationPaused } = useAegisStore();
     const [expanded] = useState(true);
 
     const navItems = [
         { name: 'Dashboard', path: '/', icon: <Shield size={20} /> },
         { name: 'Feed', path: '/feed', icon: <Activity size={20} /> },
-        { name: 'Incidents', path: '/incidents', icon: <ShieldAlert size={20} />, badge: unresolvedCount },
         { name: 'Map', path: '/map', icon: <Map size={20} /> },
         { name: 'Analytics', path: '/analytics', icon: <BarChart2 size={20} /> },
         { name: 'Settings', path: '/settings', icon: <Settings size={20} /> },
@@ -64,10 +63,6 @@ export function Sidebar() {
                     <div className="flex justify-between mb-1">
                         <span>Events:</span>
                         <span className="text-accent-primary">{events.length.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                        <span>Incidents:</span>
-                        <span className="text-accent-threat">{unresolvedCount.toLocaleString()}</span>
                     </div>
                     <div className="h-px w-full bg-bg-border my-2" />
                     <div className="mt-2 opacity-50 text-[10px]">v1.0.0 • AEGIS</div>

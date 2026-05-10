@@ -6,8 +6,7 @@ import { useAegisStore } from '../store/useAegisStore';
 
 export function useWebSocket() {
     const addEvent = useAegisStore((state) => state.addEvent);
-    const addIncident = useAegisStore((state) => state.addIncident);
-    const setConnectionState = useAegisStore((state) => state.setConnectionState);
+const setConnectionState = useAegisStore((state) => state.setConnectionState);
     const recomputeStats = useAegisStore((state) => state.recomputeStats);
     const soundEnabled = useAegisStore((state) => state.soundEnabled);
 
@@ -37,13 +36,7 @@ export function useWebSocket() {
             ws.current.onmessage = (socketEvent) => {
                 try {
                     const message = JSON.parse(socketEvent.data);
-                    if (message.type === 'incident_created' && message.incident) {
-                        addIncident(message.incident);
-                        toast.error(`🚨 ${message.incident.id} CREATED — ${message.incident.title}`);
-                        return;
-                    }
-
-                    if (message.type === 'threat_event' && message.event) {
+if (message.type === 'threat_event' && message.event) {
                         addEvent(message.event);
                         if (
                             soundEnabled &&
@@ -77,5 +70,5 @@ export function useWebSocket() {
             }
             ws.current?.close();
         };
-    }, [addEvent, addIncident, recomputeStats, setConnectionState, soundEnabled]);
+    }, [addEvent, recomputeStats, setConnectionState, soundEnabled]);
 }

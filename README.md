@@ -2,7 +2,7 @@
 
 AEGIS is a full-stack cybersecurity operations platform with:
 - FastAPI backend (REST + WebSocket threat stream)
-- React + Vite frontend (live dashboard, feed, incidents, analytics, map)
+- React + Vite frontend (live dashboard, feed, analytics, map)
 - Ensemble ML predictions (logistic regression, random forest, gradient boosting)
 - Built-in traffic simulator for continuous demo data
 
@@ -127,7 +127,6 @@ pnpm -C frontend build
 
 - WebSocket threat stream: `ws://localhost:8000/ws/threats`
 - Auth: `POST /api/auth/login`, `GET /api/auth/me`, `POST /api/auth/logout`
-- Incidents: `GET/POST /api/incidents`, `PATCH /api/incidents/{id}`
 - Metrics: `GET /api/metrics`
 - Simulator: `POST /api/simulate/attack`, `POST /api/simulate/stop`
 

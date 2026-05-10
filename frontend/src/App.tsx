@@ -6,7 +6,6 @@ import ThreatMap from './pages/ThreatMap';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import LoginPage from './pages/Login';
-import Incidents from './pages/Incidents';
 import { ProtectedRoute } from './components/shared/ProtectedRoute';
 import { AppLayout } from './components/layout/AppLayout';
 import { Toaster } from 'react-hot-toast';
@@ -21,7 +20,6 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/feed" element={<ThreatFeed />} />
-            <Route path="/incidents" element={<Incidents />} />
             <Route path="/map" element={<ThreatMap />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/settings" element={<Settings />} />

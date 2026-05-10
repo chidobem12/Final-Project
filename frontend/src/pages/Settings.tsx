@@ -4,7 +4,7 @@ import { Download } from 'lucide-react';
 import { apiFetch } from '../lib/api';
 import { useAegisStore } from '../store/useAegisStore';
 
-type DownloadKey = 'csv' | 'metrics' | 'incidents' | null;
+type DownloadKey = 'csv' | 'metrics' | null;
 
 const toCsv = (rows: Record<string, unknown>[]) => {
   if (rows.length === 0) return '';
@@ -62,16 +62,6 @@ export default function Settings() {
     }
   };
 
-  const downloadIncidents = async () => {
-    setLoading('incidents');
-    try {
-      const incidents = await apiFetch('/api/incidents');
-      downloadBlob(`aegis_incidents_${stamp}.json`, JSON.stringify(incidents, null, 2), 'application/json;charset=utf-8');
-    } finally {
-      setLoading(null);
-    }
-  };
-
   return (
     <div className="p-6 h-full flex flex-col space-y-6 max-w-5xl mx-auto w-full">
       <h1 className="font-display text-2xl text-text-primary font-bold tracking-wide">System Configuration</h1>
@@ -108,14 +98,6 @@ export default function Settings() {
             <span>{loading === 'metrics' ? 'Generating...' : 'Download Metrics Profile (JSON)'}</span>
           </button>
 
-          <button
-            disabled={loading !== null}
-            onClick={downloadIncidents}
-            className="flex items-center space-x-2 px-4 py-2 bg-bg-raised border border-bg-border rounded font-mono text-sm disabled:opacity-60"
-          >
-            <Download size={16} />
-            <span>{loading === 'incidents' ? 'Generating...' : 'Download Incident Log'}</span>
-          </button>
         </div>
       </div>
     </div>

@@ -1,5 +1,3 @@
-"""Evaluate trained models, export metrics/plots, and identify the best model by recall."""
-
 from __future__ import annotations
 
 import json
@@ -14,14 +12,7 @@ import joblib
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-)
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score, roc_auc_score
 
 from config import (
     BEST_MODEL_PATH,
@@ -32,6 +23,7 @@ from config import (
     Y_TEST_PATH,
 )
 from scripts.common import ensure_parent, save_json
+from src.evaluation import compute_metrics, evaluate_model, evaluate_all_models, print_evaluation_summary, plot_confusion_matrix
 
 
 def _safe_roc_auc(model, x_test: pd.DataFrame, y_test: pd.Series) -> float:
@@ -50,39 +42,32 @@ def evaluate_models() -> dict[str, dict[str, float]]:
     x_test = pd.read_csv(X_TEST_PATH)
     y_test = pd.read_csv(Y_TEST_PATH).iloc[:, 0]
 
-    metrics_summary: dict[str, dict[str, float]] = {}
-
+    models = {}
     for model_name, model_path in MODEL_PATHS.items():
         if not model_path.exists():
             raise FileNotFoundError(f"Model artifact missing: {model_path}")
+        models[model_name] = joblib.load(model_path)
 
-        model = joblib.load(model_path)
-        predictions = model.predict(x_test)
+    results = evaluate_all_models(models, x_test, y_test)
+    print_evaluation_summary(results)
 
-        metrics = {
-            "accuracy": float(accuracy_score(y_test, predictions)),
-            "precision": float(precision_score(y_test, predictions, average="weighted", zero_division=0)),
-            "recall": float(recall_score(y_test, predictions, average="weighted", zero_division=0)),
-            "f1": float(f1_score(y_test, predictions, average="weighted", zero_division=0)),
-            "roc_auc": _safe_roc_auc(model, x_test, y_test),
-        }
-        metrics_summary[model_name] = metrics
+    metrics_summary = {}
+    for name, result in results.items():
+        m = result["metrics"]
+        metrics_summary[name] = m
+        cm = result["confusion_matrix"]
 
-        cm = confusion_matrix(y_test, predictions)
-        plt.figure(figsize=(6, 5))
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
-        plt.title(f"Confusion Matrix - {model_name}")
-        plt.ylabel("Actual")
-        plt.xlabel("Predicted")
-        cm_path = OUTPUTS_FIGURES_DIR / f"confusion_matrix_{model_name}.png"
-        ensure_parent(cm_path)
-        plt.tight_layout()
-        plt.savefig(cm_path)
-        plt.close()
+        fig = plot_confusion_matrix(
+            cm,
+            labels=["Benign", "Attack"],
+            title=f"Confusion Matrix - {name}",
+            save_path=OUTPUTS_FIGURES_DIR / f"confusion_matrix_{name}.png",
+        )
+        plt.close(fig)
 
-    rf_model = joblib.load(MODEL_PATHS["random_forest"])
-    if hasattr(rf_model, "feature_importances_"):
-        importances = rf_model.feature_importances_
+    rf_model = models["random_forest"]
+    if hasattr(rf_model.named_steps["classifier"], "feature_importances_"):
+        importances = rf_model.named_steps["classifier"].feature_importances_
         feature_names = x_test.columns
         importance_df = (
             pd.DataFrame({"feature": feature_names, "importance": importances})
@@ -98,7 +83,6 @@ def evaluate_models() -> dict[str, dict[str, float]]:
         plt.savefig(fi_path)
         plt.close()
 
-    # Recall is the primary metric for threat detection to minimize missed attacks.
     best_model_name = max(metrics_summary, key=lambda name: metrics_summary[name]["recall"])
     best_model_payload = {
         "best_model": best_model_name,

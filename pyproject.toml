@@ -1,0 +1,60 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore::sklearn.base.InconsistentVersionWarning",
+]
+
+[tool.coverage.run]
+source = ["src", "dashboard", "backend", "scripts"]
+omit = [
+    "tests/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@abstractmethod",
+    "@abc.abstractmethod",
+]
+
+[project]
+name = "aegis"
+version = "2.0.0"
+description = "AEGIS - SOC Threat Operations Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "websockets>=12.0",
+    "python-socketio>=5.11.0",
+    "scikit-learn>=1.8.0",
+    "imbalanced-learn>=0.14.1",
+    "joblib>=1.5.3",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "pydantic>=2.5.3",
+    "python-multipart>=0.0.6",
+    "python-jose[cryptography]>=3.3.0",
+    "bcrypt>=4.1.2",
+    "passlib[bcrypt]>=1.7.4",
+    "shap>=0.44.0",
+    "matplotlib>=3.10.9",
+    "seaborn>=0.13.2",
+    "streamlit>=1.57.0",
+    "xgboost>=3.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+]

@@ -1,5 +1,3 @@
-"""Preprocess combined data: clean, encode labels, split, normalize, select features, and apply train-only SMOTE."""
-
 from __future__ import annotations
 
 import json
@@ -13,7 +11,6 @@ if str(ROOT) not in sys.path:
 import joblib
 import numpy as np
 import pandas as pd
-from imblearn.over_sampling import SMOTE
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
@@ -32,6 +29,8 @@ from config import (
     Y_TRAIN_PATH,
 )
 from scripts.common import clean_dataframe, ensure_parent
+from imblearn.over_sampling import SMOTE
+from src.preprocessing import clean
 
 
 def preprocess_data(
@@ -86,7 +85,6 @@ def preprocess_data(
     x_train_selected = x_train_scaled[selected_columns]
     x_test_selected = x_test_scaled[selected_columns]
 
-    # SMOTE is applied only to training data to avoid test-set leakage.
     smote = SMOTE(random_state=RANDOM_STATE)
     x_train_resampled, y_train_resampled = smote.fit_resample(x_train_selected, y_train)
 

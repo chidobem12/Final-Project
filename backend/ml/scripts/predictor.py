@@ -1,5 +1,3 @@
-"""Reusable prediction utilities shared by CLI and dashboard inference paths."""
-
 from __future__ import annotations
 
 import json

@@ -1,5 +1,3 @@
-"""Ingest all raw CSV files, validate schema, and create a unified combined dataset."""
-
 from __future__ import annotations
 
 from pathlib import Path
@@ -13,6 +11,7 @@ import pandas as pd
 
 from config import DATA_RAW_DIR, RAW_COMBINED_PATH, TARGET_COLUMN
 from scripts.common import clean_dataframe, ensure_parent, find_csv_files
+from src.data_ingestion import report_shape
 
 
 def ingest_raw_files(raw_dir: Path = DATA_RAW_DIR, output_path: Path = RAW_COMBINED_PATH) -> pd.DataFrame:
@@ -36,7 +35,7 @@ def ingest_raw_files(raw_dir: Path = DATA_RAW_DIR, output_path: Path = RAW_COMBI
 
     ensure_parent(output_path)
     combined.to_csv(output_path, index=False)
-    print(f"Saved combined dataset to {output_path} with {len(combined):,} rows")
+    report_shape(combined, name=str(output_path))
     return combined
 
 

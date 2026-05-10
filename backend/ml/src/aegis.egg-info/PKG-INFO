@@ -1,3 +1,29 @@
+Metadata-Version: 2.4
+Name: aegis
+Version: 2.0.0
+Summary: AEGIS - SOC Threat Operations Platform
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.109.0
+Requires-Dist: uvicorn[standard]>=0.27.0
+Requires-Dist: websockets>=12.0
+Requires-Dist: python-socketio>=5.11.0
+Requires-Dist: scikit-learn>=1.8.0
+Requires-Dist: imbalanced-learn>=0.14.1
+Requires-Dist: joblib>=1.5.3
+Requires-Dist: numpy>=2.4.4
+Requires-Dist: pandas>=3.0.2
+Requires-Dist: pydantic>=2.5.3
+Requires-Dist: python-multipart>=0.0.6
+Requires-Dist: python-jose[cryptography]>=3.3.0
+Requires-Dist: bcrypt>=4.1.2
+Requires-Dist: passlib[bcrypt]>=1.7.4
+Requires-Dist: shap>=0.44.0
+Requires-Dist: matplotlib>=3.10.9
+Requires-Dist: seaborn>=0.13.2
+Requires-Dist: streamlit>=1.57.0
+Requires-Dist: xgboost>=3.2.0
+
 # AEGIS v2 — SOC Threat Operations Platform
 
 AEGIS is a full-stack cybersecurity operations platform with:

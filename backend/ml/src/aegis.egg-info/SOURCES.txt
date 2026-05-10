@@ -1,0 +1,16 @@
+README.md
+pyproject.toml
+src/__init__.py
+src/data_ingestion.py
+src/evaluation.py
+src/models.py
+src/preprocessing.py
+src/aegis.egg-info/PKG-INFO
+src/aegis.egg-info/SOURCES.txt
+src/aegis.egg-info/dependency_links.txt
+src/aegis.egg-info/requires.txt
+src/aegis.egg-info/top_level.txt
+tests/test_data_ingestion.py
+tests/test_ingest.py
+tests/test_models.py
+tests/test_preprocess.py

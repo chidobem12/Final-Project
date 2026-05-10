@@ -1,5 +1,3 @@
-"""Project configuration constants for the cyber-threat detection pipeline."""
-
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -14,6 +12,7 @@ RANDOM_STATE = 42
 TEST_SIZE = 0.2
 SAMPLE_SIZE = 200000
 
+# Combined pipeline paths
 RAW_COMBINED_PATH = DATA_PROCESSED_DIR / "raw_combined.csv"
 X_TRAIN_PATH = DATA_PROCESSED_DIR / "X_train.csv"
 X_TEST_PATH = DATA_PROCESSED_DIR / "X_test.csv"
@@ -31,3 +30,25 @@ MODEL_PATHS = {
 
 METRICS_SUMMARY_PATH = OUTPUTS_METRICS_DIR / "metrics_summary.json"
 BEST_MODEL_PATH = OUTPUTS_METRICS_DIR / "best_model.json"
+
+# Dataset-specific config
+DATASET_CONFIGS = {
+    "cicids2017": {
+        "label_col": " Label",
+        "raw_dir": DATA_RAW_DIR / "CIC_IDS_2017",
+        "processed_dir": DATA_PROCESSED_DIR / "cicids2017",
+        "models_dir": MODELS_DIR / "cicids2017",
+    },
+    "unsw_nb15": {
+        "label_col": "label",
+        "raw_dir": DATA_RAW_DIR / "UNSW_NB15",
+        "processed_dir": DATA_PROCESSED_DIR / "unsw_nb15",
+        "models_dir": MODELS_DIR / "unsw_nb15",
+    },
+    "kddcup99": {
+        "label_col": "label",
+        "raw_dir": DATA_RAW_DIR / "KDD_CUP_1999",
+        "processed_dir": DATA_PROCESSED_DIR / "kddcup99",
+        "models_dir": MODELS_DIR / "kddcup99",
+    },
+}

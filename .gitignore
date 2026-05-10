@@ -18,3 +18,30 @@ frontend/dist/
 # Local env files
 .env
 .env.*
+
+# Data
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Models
+models/*.joblib
+models/*.json
+models/**/*.joblib
+models/**/*.json
+
+# Outputs
+outputs/figures/*
+outputs/metrics/*
+!outputs/.gitkeep
+
+# Notebook checkpoints
+notebooks/.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp
+temp/

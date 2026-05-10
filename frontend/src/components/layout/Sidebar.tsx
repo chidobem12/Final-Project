@@ -42,9 +42,6 @@ export function Sidebar() {
                     >
                         <div className="flex-shrink-0">{item.icon}</div>
                         {expanded && <span className="ml-3 text-sm font-medium">{item.name}</span>}
-                        {expanded && item.badge && item.badge > 0 && (
-                            <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-accent-threat text-bg-void font-mono">{item.badge}</span>
-                        )}
                     </NavLink>
                 ))}
             </nav>

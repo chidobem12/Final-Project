@@ -15,8 +15,8 @@ class StatsAggregator:
 
     def _load_training_metrics(self) -> Dict[str, Any]:
         metrics_path = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../outputs/metrics/metrics_summary.json")
-        )
+    os.path.join(os.path.dirname(__file__), "../ml/outputs/metrics/metrics_summary.json")
+)
         if not os.path.exists(metrics_path):
             return {}
         with open(metrics_path, "r", encoding="utf-8") as metrics_file:

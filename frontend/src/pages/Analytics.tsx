@@ -72,11 +72,11 @@ export default function Analytics() {
             <div key={model} className="border border-bg-border rounded p-3 bg-bg-raised">
               <div className="text-text-primary mb-2">{model.replaceAll('_', ' ')}</div>
               <div className="space-y-1 text-text-secondary">
-                <div>accuracy: {trainingMetrics ? formatPercent(trainingMetrics[model].accuracy) : '--'}</div>
-                <div>precision: {trainingMetrics ? formatPercent(trainingMetrics[model].precision) : '--'}</div>
-                <div>recall: {trainingMetrics ? formatPercent(trainingMetrics[model].recall) : '--'}</div>
-                <div>f1: {trainingMetrics ? formatPercent(trainingMetrics[model].f1) : '--'}</div>
-                <div>roc-auc: {trainingMetrics ? formatPercent(trainingMetrics[model].roc_auc) : '--'}</div>
+                <div>accuracy: {trainingMetrics?.[model]?.accuracy != null ? formatPercent(trainingMetrics[model].accuracy) : '--'}</div>
+                <div>precision: {trainingMetrics?.[model]?.precision != null ? formatPercent(trainingMetrics[model].precision) : '--'}</div>
+                <div>recall: {trainingMetrics?.[model]?.recall != null ? formatPercent(trainingMetrics[model].recall) : '--'}</div>
+                <div>f1: {trainingMetrics?.[model]?.f1 != null ? formatPercent(trainingMetrics[model].f1) : '--'}</div>
+                <div>roc-auc: {trainingMetrics?.[model]?.roc_auc != null ? formatPercent(trainingMetrics[model].roc_auc) : '--'}</div>
               </div>
             </div>
           ))}
@@ -103,8 +103,8 @@ export default function Analytics() {
           {(['logistic_regression', 'random_forest', 'gradient_boosting'] as ModelKey[]).map((key) => (
             <div key={key} className="border border-bg-border rounded p-3 bg-bg-raised text-text-secondary">
               <div className="text-text-primary mb-1">{key.replaceAll('_', ' ')}</div>
-              <div>training recall: {trainingMetrics ? formatPercent(trainingMetrics[key].recall) : '--'}</div>
-              <div>live recall: {formatPercent(liveAccuracy[key].recall)}</div>
+              <div>training recall: {trainingMetrics?.[key]?.recall != null ? formatPercent(trainingMetrics[key].recall) : '--'}</div>
+              <div>live recall: {liveAccuracy[key]?.recall != null ? formatPercent(liveAccuracy[key].recall) : '--'}</div>
             </div>
           ))}
         </div>

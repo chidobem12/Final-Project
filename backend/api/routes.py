@@ -1,6 +1,8 @@
+import io
 from typing import Any
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+import pandas as pd
+from fastapi import APIRouter, File, UploadFile, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
 from .ws_handler import manager
@@ -113,4 +115,20 @@ async def test_scenarios() -> dict[str, Any]:
         }
 
     return {"results": results}
+
+
+@router.post("/api/upload/csv")
+async def upload_csv(file: UploadFile = File(...)):
+    contents = await file.read()
+    df = pd.read_csv(io.BytesIO(contents))
+    results = predictor.predict_dataframe(df)
+    attacks = sum(1 for r in results if r["prediction"] == "ATTACK")
+    return {
+        "filename": file.filename,
+        "total_rows": len(results),
+        "attacks_detected": attacks,
+        "normal_classified": len(results) - attacks,
+        "attack_rate": round(attacks / len(results), 4) if results else 0,
+        "results": results,
+    }
 

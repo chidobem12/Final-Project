@@ -1,10 +1,28 @@
-import { useState } from 'react';
-import { Download } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Download, Upload } from 'lucide-react';
 
-import { apiFetch } from '../lib/api';
+import { apiFetch, apiUpload } from '../lib/api';
 import { useAegisStore } from '../store/useAegisStore';
 
 type DownloadKey = 'csv' | 'metrics' | null;
+
+interface UploadResult {
+  filename: string;
+  total_rows: number;
+  attacks_detected: number;
+  normal_classified: number;
+  attack_rate: number;
+  results: Array<{
+    row: number;
+    prediction: 'ATTACK' | 'NORMAL';
+    attack_type: string;
+    severity: string;
+    risk_score: number;
+    confidence: number;
+    model_votes: Record<string, { prediction: number; confidence: number }>;
+    top_features: Array<{ name: string; score: number }>;
+  }>;
+}
 
 const toCsv = (rows: Record<string, unknown>[]) => {
   if (rows.length === 0) return '';
@@ -40,6 +58,9 @@ const downloadBlob = (fileName: string, content: string, contentType: string) =>
 export default function Settings() {
   const { events, soundEnabled, setSoundEnabled } = useAegisStore();
   const [loading, setLoading] = useState<DownloadKey>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const stamp = new Date().toISOString().replaceAll(':', '-');
 
@@ -59,6 +80,24 @@ export default function Settings() {
       downloadBlob(`aegis_metrics_${stamp}.json`, JSON.stringify(metrics, null, 2), 'application/json;charset=utf-8');
     } finally {
       setLoading(null);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadResult(null);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const result = await apiUpload<UploadResult>('/api/upload/csv', formData);
+      setUploadResult(result);
+    } catch {
+      // handled by toast or silent
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
     }
   };
 
@@ -97,8 +136,83 @@ export default function Settings() {
             <Download size={16} />
             <span>{loading === 'metrics' ? 'Generating...' : 'Download Metrics Profile (JSON)'}</span>
           </button>
-
         </div>
+      </div>
+
+      <div className="bg-bg-surface border border-bg-border rounded-lg p-6">
+        <h2 className="font-display font-bold text-sm tracking-widest uppercase mb-6 border-b border-bg-border pb-2">CSV Analysis</h2>
+        <div className="flex items-center gap-4">
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            className="hidden"
+            id="csv-upload"
+          />
+          <label
+            htmlFor="csv-upload"
+            className="flex items-center space-x-2 px-4 py-2 bg-bg-raised border border-bg-border rounded font-mono text-sm cursor-pointer hover:bg-bg-raised/80"
+          >
+            <Upload size={16} />
+            <span>{uploading ? 'Analyzing...' : 'Choose CSV'}</span>
+          </label>
+          {uploadResult && (
+            <span className="text-xs text-text-secondary font-mono">{uploadResult.filename} — {uploadResult.total_rows} rows</span>
+          )}
+        </div>
+
+        {uploadResult && (
+          <div className="mt-4 space-y-4">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="bg-bg-raised border border-bg-border rounded p-3">
+                <div className="text-xs text-text-secondary uppercase">Total Rows</div>
+                <div className="text-lg font-mono text-text-primary">{uploadResult.total_rows}</div>
+              </div>
+              <div className="bg-bg-raised border border-bg-border rounded p-3">
+                <div className="text-xs text-text-secondary uppercase">Attacks</div>
+                <div className="text-lg font-mono text-accent-threat">{uploadResult.attacks_detected}</div>
+              </div>
+              <div className="bg-bg-raised border border-bg-border rounded p-3">
+                <div className="text-xs text-text-secondary uppercase">Normal</div>
+                <div className="text-lg font-mono text-accent-primary">{uploadResult.normal_classified}</div>
+              </div>
+              <div className="bg-bg-raised border border-bg-border rounded p-3">
+                <div className="text-xs text-text-secondary uppercase">Attack Rate</div>
+                <div className="text-lg font-mono text-accent-warning">{(uploadResult.attack_rate * 100).toFixed(1)}%</div>
+              </div>
+            </div>
+
+            <div className="max-h-64 overflow-auto border border-bg-border rounded">
+              <table className="w-full text-xs font-mono">
+                <thead className="sticky top-0 bg-bg-surface">
+                  <tr className="border-b border-bg-border text-text-secondary">
+                    <th className="text-left p-2">#</th>
+                    <th className="text-left p-2">Prediction</th>
+                    <th className="text-left p-2">Severity</th>
+                    <th className="text-right p-2">Risk</th>
+                    <th className="text-right p-2">Confidence</th>
+                    <th className="text-left p-2">Attack Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {uploadResult.results.map((r) => (
+                    <tr key={r.row} className="border-b border-bg-border hover:bg-bg-raised">
+                      <td className="p-2 text-text-secondary">{r.row}</td>
+                      <td className={`p-2 ${r.prediction === 'ATTACK' ? 'text-accent-threat' : 'text-accent-primary'}`}>
+                        {r.prediction}
+                      </td>
+                      <td className="p-2 text-text-secondary">{r.severity}</td>
+                      <td className="p-2 text-right text-text-primary">{r.risk_score}</td>
+                      <td className="p-2 text-right text-text-primary">{(r.confidence * 100).toFixed(1)}%</td>
+                      <td className="p-2 text-text-secondary">{r.attack_type}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
